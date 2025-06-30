@@ -1,0 +1,759 @@
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* IoT Medical Theme Colors */
+  --primary-color: #2563eb;
+  --primary-dark: #1e40af;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-dark: #1e293b;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-light: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.medispenser-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hidden utility class */
+.hidden {
+  display: none !important;
+}
+
+/* Connection Warning */
+.connection-warning {
+  background: #fee2e2;
+  color: var(--danger-color);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+/* PIN Authentication Page */
+.pin-auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  padding: 2rem 1rem;
+}
+
+.auth-header {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.logo-section {
+  color: white;
+}
+
+.auth-logo {
+  width: 300px;
+  height: auto;
+  margin-bottom: 1rem;
+  filter: brightness(0) invert(1); /* Make logo white on auth page */
+}
+
+.device-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.app-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: white;
+}
+
+.auth-clock {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.auth-time {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.auth-date {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.auth-form {
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.pin-input-container {
+  margin-bottom: 2rem;
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 2px solid var(--border-light);
+  border-radius: 12px;
+  background: transparent;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  transition: all 0.3s ease;
+}
+
+.dot.filled {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.keypad-btn {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 60px;
+  touch-action: manipulation;
+}
+
+.keypad-btn:hover {
+  background: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.keypad-btn:active {
+  transform: translateY(0);
+  background: var(--primary-color);
+  color: white;
+}
+
+.clear-btn {
+  background: var(--danger-color) !important;
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.enter-btn {
+  background: var(--success-color) !important;
+  color: white !important;
+  font-size: 1rem !important;
+}
+
+.pin-error {
+  background: #fee2e2;
+  color: var(--danger-color);
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Home Page */
+.home-page {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.app-header {
+  background: white;
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.app-logo {
+  height: 80px;
+  width: auto;
+}
+
+.header-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.current-time {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.current-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 1.2rem;
+}
+
+.logout-btn:hover {
+  background: var(--border-light);
+}
+
+.main-content {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Status Section */
+.status-section {
+  margin-bottom: 2rem;
+}
+
+.status-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-icon {
+  font-size: 2rem;
+}
+
+.status-info h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.status-info p {
+  color: var(--success-color);
+  font-weight: 500;
+}
+
+.realtime-status {
+  margin-top: 0.5rem;
+}
+
+.realtime-status small {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Medicines Section */
+.medicines-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.medicines-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.medicine-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.medicine-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.medicine-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.medicine-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medicine-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.medicine-dosage {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.medicine-details {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.quantity-info, .rfid-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.quantity-label, .rfid-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.quantity-value, .rfid-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Actions Section */
+.actions-section {
+  margin-bottom: 2rem;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 56px;
+  touch-action: manipulation;
+}
+
+.action-btn.primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.action-btn.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.action-btn.primary:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+/* Animations */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.medicine-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --surface: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-light: #334155;
+  }
+
+  .pin-auth-page {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  }
+
+  .auth-form {
+    background: var(--surface);
+    color: var(--text-primary);
+  }
+
+  .pin-input {
+    background: var(--background);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+  }
+
+  .keypad-btn {
+    background: var(--background);
+    color: var(--text-primary);
+  }
+
+  .medicine-card, .status-card, .app-header {
+    background: var(--surface);
+  }
+
+  .connection-warning {
+    background: #451a03;
+    color: #fbbf24;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .pin-auth-page {
+    padding: 1rem;
+  }
+
+  .auth-form {
+    padding: 1.5rem;
+  }
+
+  .app-title {
+    font-size: 2rem;
+  }
+
+  .device-icon {
+    font-size: 3rem;
+  }
+
+  .auth-logo {
+    width: 220px;
+  }
+
+  .app-logo {
+    height: 60px;
+  }
+
+  .header-clock {
+    display: none; /* Hide clock on mobile to save space */
+  }
+
+  .current-time {
+    font-size: 1.2rem;
+  }
+
+  .current-date {
+    font-size: 0.7rem;
+  }
+
+  .auth-time {
+    font-size: 1.5rem;
+  }
+
+  .auth-date {
+    font-size: 0.9rem;
+  }
+
+  .keypad-btn {
+    min-height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .main-content {
+    padding: 0.75rem;
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .pin-auth-page {
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .auth-header {
+    flex: 0.4;
+  }
+
+  .auth-form {
+    flex: 0.6;
+    margin-top: 0;
+    margin-left: 2rem;
+  }
+
+  .device-icon {
+    font-size: 2.5rem;
+  }
+
+  .auth-logo {
+    width: 180px;
+  }
+
+  .auth-clock {
+    margin-top: 1rem;
+  }
+
+  .auth-time {
+    font-size: 1.5rem;
+  }
+
+  .auth-date {
+    font-size: 0.8rem;
+  }
+
+  .app-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* PWA/Mobile App styles */
+@media (display-mode: standalone) {
+  .app-header {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Touch improvements for mobile */
+@media (hover: none) {
+  .keypad-btn:hover,
+  .action-btn:hover,
+  .medicine-card:hover {
+    transform: none;
+  }
+}
+
+/* Medication Alert System Styles */
+.next-medication-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #2196F3;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+}
+
+.next-med-header h4 {
+  margin: 0 0 12px 0;
+  color: #1976d2;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.next-med-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.med-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+.med-time {
+  font-size: 16px;
+  color: #1565c0;
+  font-weight: 600;
+}
+
+.med-dosage {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Action Button Enhancements */
+.actions-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+/* Status Section Improvements */
+.status-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Medicine Card Alert Enhancements */
+.medicine-card {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.medicine-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-indicator {
+  animation: pulse 2s infinite;
+}
+
+.schedule-indicator.schedule-active {
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+/* Responsive Design for Alerts */
+@media (max-width: 768px) {
+  .actions-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .next-medication-card {
+    margin: 12px 0;
+  }
+}
+
+/* Alert Modal Responsive Improvements */
+@media (max-width: 480px) {
+  .alert-modal {
+    margin: 16px;
+    max-width: calc(100vw - 32px);
+  }
+  
+  .alert-actions {
+    gap: 8px;
+  }
+}
