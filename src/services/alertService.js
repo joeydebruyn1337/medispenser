@@ -53,19 +53,19 @@ class AlertService {
     // Comprehensive example schedules based on typical medication regimens
     const exampleSchedules = [
       {
-        // Paracetamol - pain relief, every 6 hours + test alert
-        times: ['08:00', '14:00', '20:00', formatTime(testTime1)],
-        description: 'Pain relief medication - every 6 hours'
+        // Paracetamol - pain relief, every 6 hours + test alert + new reminder times
+        times: ['08:00', '14:00', '20:00', '09:10', '09:15', '09:20', formatTime(testTime1)],
+        description: 'Pain relief medication - every 6 hours + morning reminders'
       },
       {
-        // Aspirin - cardiovascular protection, once daily morning + test alert
-        times: ['09:00', formatTime(testTime2)],
-        description: 'Daily cardiovascular protection - morning dose'
+        // Aspirin - cardiovascular protection + new specific reminder times + test alert
+        times: ['21:06', '09:10', '09:15', '09:20', formatTime(testTime2)],
+        description: 'Daily cardiovascular protection + morning reminders'
       },
       {
-        // Ibuprofen - anti-inflammatory, three times daily
-        times: ['07:00', '15:00', '23:00', formatTime(testTime3)],
-        description: 'Anti-inflammatory medication - three times daily'
+        // Ibuprofen - anti-inflammatory, three times daily + morning reminders
+        times: ['07:00', '15:00', '23:00', '09:10', '09:15', '09:20', formatTime(testTime3)],
+        description: 'Anti-inflammatory medication - three times daily + morning reminders'
       },
       {
         // Amoxicillin - antibiotic, every 8 hours
