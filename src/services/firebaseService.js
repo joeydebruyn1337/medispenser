@@ -71,46 +71,86 @@ class FirebaseService {
 
   // Set up real-time listener for medicine data changes
   async setupRealTimeListener(callback) {
-    // If database is null (demo mode), simulate updates with demo data
+    // If database is null (demo mode), simulate periodic updates with demo data
     if (!database) {
-      console.log('Demo mode: No real-time updates available');
-      return () => {}; // Return empty cleanup function
+      console.log('Demo mode: Setting up simulated real-time updates');
+      
+      // Simulate real-time updates every 30 seconds in demo mode
+      const simulateUpdates = () => {
+        const demoData = Object.values(demoMedicines.medicines);
+        console.log('Demo mode: Simulating real-time update');
+        callback(demoData);
+      };
+      
+      // Initial call
+      setTimeout(simulateUpdates, 1000);
+      
+      // Set up periodic updates
+      const intervalId = setInterval(simulateUpdates, 30000);
+      
+      return () => {
+        clearInterval(intervalId);
+        console.log('Demo mode: Stopped simulated updates');
+      };
     }
 
     try {
-      const { ref, onValue } = await import('firebase/database');
+      const { ref, onValue, off } = await import('firebase/database');
       const medicinesRef = ref(database, 'medicines');
       
       // Remove previous listener if exists
       this.removeRealTimeListener();
       
-      console.log('Setting up real-time listener for medicines...');
+      console.log('🔄 Setting up Firebase real-time listener for medicines...');
       
       const unsubscribe = onValue(medicinesRef, (snapshot) => {
+        console.log('📡 Firebase real-time update received');
+        
         if (snapshot.exists()) {
           const data = snapshot.val();
           const medicines = this.convertFirebaseData(data);
-          console.log('Real-time update received:', medicines);
+          console.log('✅ Real-time data processed:', medicines.length, 'medicines');
+          
+          // Mark as connected since we got data
+          this.isConnected = true;
           
           // Call the callback with updated data
           callback(medicines);
         } else {
-          console.log('No medicines data in real-time update');
+          console.log('⚠️ No medicines data in real-time update');
+          this.isConnected = false;
           callback([]);
         }
       }, (error) => {
-        console.warn('Real-time listener error:', error);
+        console.warn('❌ Real-time listener error:', error);
+        this.isConnected = false;
+        
         // Fallback to demo data on error
-        callback(Object.values(demoMedicines.medicines));
+        const fallbackData = Object.values(demoMedicines.medicines);
+        console.log('🔄 Falling back to demo data');
+        callback(fallbackData);
+        
+        // Try to reconnect after a delay
+        setTimeout(() => {
+          console.log('🔄 Attempting to reconnect real-time listener...');
+          this.setupRealTimeListener(callback);
+        }, 5000);
       });
 
       this.currentListener = unsubscribe;
+      console.log('✅ Firebase real-time listener successfully established');
 
       // Return cleanup function
       return () => this.removeRealTimeListener();
       
     } catch (error) {
-      console.warn('Failed to setup real-time listener:', error);
+      console.warn('❌ Failed to setup real-time listener:', error);
+      this.isConnected = false;
+      
+      // Fallback to demo data and return empty cleanup function
+      const fallbackData = Object.values(demoMedicines.medicines);
+      callback(fallbackData);
+      
       return () => {}; // Return empty cleanup function
     }
   }

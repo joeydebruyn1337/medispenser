@@ -53,24 +53,24 @@ class AlertService {
     // Comprehensive example schedules based on typical medication regimens
     const exampleSchedules = [
       {
-        // Paracetamol - pain relief, every 6 hours + test alert + new reminder times
-        times: ['08:00', '14:00', '20:00', '09:10', '09:15', '09:20', formatTime(testTime1)],
-        description: 'Pain relief medication - every 6 hours + morning reminders'
+        // Paracetamol - pain relief, every 6 hours + test alert + new reminder times + evening alerts
+        times: ['08:00', '14:00', '20:00', '09:10', '09:15', '09:20', '21:16', formatTime(testTime1)],
+        description: 'Pain relief medication - every 6 hours + morning/evening reminders'
       },
       {
-        // Aspirin - cardiovascular protection + new specific reminder times + test alert
-        times: ['21:06', '09:10', '09:15', '09:20', formatTime(testTime2)],
-        description: 'Daily cardiovascular protection + morning reminders'
+        // Aspirin - cardiovascular protection + new specific reminder times + test alert + evening alerts
+        times: ['21:06', '09:10', '09:15', '09:20', '21:17', formatTime(testTime2)],
+        description: 'Daily cardiovascular protection + morning/evening reminders'
       },
       {
-        // Ibuprofen - anti-inflammatory, three times daily + morning reminders
-        times: ['07:00', '15:00', '23:00', '09:10', '09:15', '09:20', formatTime(testTime3)],
-        description: 'Anti-inflammatory medication - three times daily + morning reminders'
+        // Ibuprofen - anti-inflammatory, three times daily + morning reminders + evening alerts
+        times: ['07:00', '15:00', '23:00', '09:10', '09:15', '09:20', '21:18', formatTime(testTime3)],
+        description: 'Anti-inflammatory medication - three times daily + morning/evening reminders'
       },
       {
-        // Amoxicillin - antibiotic, every 8 hours
-        times: ['08:00', '16:00', '00:00'],
-        description: 'Antibiotic medication - every 8 hours'
+        // Amoxicillin - antibiotic, every 8 hours + evening alert
+        times: ['08:00', '16:00', '00:00', '21:16'],
+        description: 'Antibiotic medication - every 8 hours + evening reminder'
       },
       {
         // Additional schedule for more medicines if available

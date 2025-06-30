@@ -38,24 +38,42 @@ class MedicineService {
 
     // If we already have a listener, don't create another one
     if (this.realTimeCleanup) {
+      console.log('Real-time updates already active, adding callback to existing listener');
       return;
     }
 
-    console.log('Starting real-time medicine updates...');
+    console.log('🚀 Starting real-time medicine updates...');
     
     this.realTimeCleanup = await firebaseService.setupRealTimeListener((medicines) => {
+      console.log(`📊 Processing real-time update: ${medicines.length} medicines received`);
+      
       // Normalize the medicines data
+      const oldMedicines = [...this.medicines];
       this.medicines = medicines.map(medicine => this.normalizeMedicine(medicine));
       
+      // Log any changes for debugging
+      if (JSON.stringify(oldMedicines) !== JSON.stringify(this.medicines)) {
+        console.log('🔄 Medicine data changed, updating UI');
+        console.log('Old data length:', oldMedicines.length);
+        console.log('New data length:', this.medicines.length);
+      } else {
+        console.log('📝 Medicine data unchanged');
+      }
+      
       // Notify all callbacks
-      this.updateCallbacks.forEach(cb => {
+      this.updateCallbacks.forEach((cb, index) => {
         try {
           cb(this.medicines);
+          console.log(`✅ Callback ${index + 1} executed successfully`);
         } catch (error) {
-          console.warn('Error in update callback:', error);
+          console.warn(`❌ Error in update callback ${index + 1}:`, error);
         }
       });
+      
+      console.log(`🎯 Real-time update complete: ${this.updateCallbacks.length} callbacks notified`);
     });
+    
+    console.log('✅ Real-time medicine updates initialized');
   }
 
   // Stop real-time updates

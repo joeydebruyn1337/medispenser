@@ -131,12 +131,93 @@ function stopClock() {
 }
 
 // Function to update real-time status
-function updateRealTimeStatus(isActive) {
+function updateRealTimeStatus(isActive, isSyncing = false) {
   const statusElement = document.getElementById('realtime-status');
   if (statusElement) {
-    statusElement.innerHTML = isActive 
-      ? '<small>🟢 Real-time updates active</small>' 
-      : '<small>🟡 Real-time updates paused</small>';
+    if (isSyncing) {
+      statusElement.innerHTML = '<small>🔄 Syncing data...</small>';
+      statusElement.style.animation = 'pulse 1s ease-in-out';
+      
+      // Reset to normal status after animation
+      setTimeout(() => {
+        statusElement.innerHTML = isActive 
+          ? '<small>🟢 Real-time updates active</small>' 
+          : '<small>🟡 Real-time updates paused</small>';
+        statusElement.style.animation = '';
+      }, 1500);
+    } else {
+      statusElement.innerHTML = isActive 
+        ? '<small>🟢 Real-time updates active</small>' 
+        : '<small>🟡 Real-time updates paused</small>';
+      statusElement.style.animation = '';
+    }
+  }
+}
+
+// Function to update next medication info
+function updateNextMedicationInfo() {
+  const upcomingMeds = alertService.getUpcomingMedications();
+  const nextMed = upcomingMeds.length > 0 ? upcomingMeds[0] : null;
+  
+  // Find the existing next medication section
+  const statusSection = document.querySelector('.status-section');
+  if (!statusSection) return;
+  
+  // Remove existing next medication card
+  const existingNextMedCard = statusSection.querySelector('.next-medication-card');
+  if (existingNextMedCard) {
+    existingNextMedCard.remove();
+  }
+  
+  // Add new next medication card if there's an upcoming medication
+  if (nextMed) {
+    const nextMedCard = document.createElement('div');
+    nextMedCard.className = 'next-medication-card';
+    nextMedCard.innerHTML = `
+      <div class="next-med-header">
+        <h4>⏰ Next Medication</h4>
+      </div>
+      <div class="next-med-info">
+        <span class="med-name">${nextMed.medicineName}</span>
+        <span class="med-time">at ${nextMed.time}</span>
+        <span class="med-dosage">${nextMed.dosage}</span>
+      </div>
+    `;
+    statusSection.appendChild(nextMedCard);
+  }
+}
+
+// Function to update connection status
+function updateConnectionStatus() {
+  const isConnected = medicineService.isFirebaseConnected();
+  const statusIcon = isConnected ? '🟢' : '🟡';
+  const statusText = isConnected ? CONNECTION_STATUS.ONLINE : CONNECTION_STATUS.OFFLINE;
+  
+  // Update status icon and text
+  const statusIconElement = document.querySelector('.status-icon');
+  const statusInfoElement = document.querySelector('.status-info p');
+  
+  if (statusIconElement) {
+    statusIconElement.textContent = statusIcon;
+  }
+  
+  if (statusInfoElement) {
+    statusInfoElement.textContent = statusText;
+  }
+  
+  // Update connection warning
+  const existingWarning = document.querySelector('.connection-warning');
+  const mainContent = document.querySelector('.main-content');
+  
+  if (!isConnected && !existingWarning && mainContent) {
+    // Add connection warning if not connected and warning doesn't exist
+    const warningDiv = document.createElement('div');
+    warningDiv.className = 'connection-warning';
+    warningDiv.textContent = MESSAGES.CONNECTION_WARNING;
+    mainContent.appendChild(warningDiv);
+  } else if (isConnected && existingWarning) {
+    // Remove connection warning if connected
+    existingWarning.remove();
   }
 }
 
@@ -158,22 +239,52 @@ export function setupHomePageEvents(onLogout) {
   console.log('Setting up real-time medicine updates...');
   
   const updateCallback = (medicines) => {
+    console.log('Real-time update received, updating UI components...');
+    
+    // Update medicine cards
     updateMedicineCards();
+    
+    // Update next medication info
+    updateNextMedicationInfo();
+    
+    // Update connection status
+    updateConnectionStatus();
+    
+    // Update real-time status indicator
     updateRealTimeStatus(true);
+    
+    console.log('UI components updated with new medicine data');
   };
 
   // Start real-time updates
   medicineService.startRealTimeUpdates(updateCallback);
+  
+  // Set up periodic refresh to ensure UI stays current
+  const periodicRefresh = setInterval(() => {
+    console.log('🔄 Periodic UI refresh...');
+    updateNextMedicationInfo();
+    updateConnectionStatus();
+  }, 60000); // Refresh every minute
   
   // Update status to show real-time is active
   setTimeout(() => {
     updateRealTimeStatus(medicineService.isFirebaseConnected());
   }, 1000);
 
+  // Store periodic refresh reference for cleanup
+  window.homePagePeriodicRefresh = periodicRefresh;
+
   logoutBtn.addEventListener('click', () => {
     // Clean up real-time updates and clock when logging out
     medicineService.stopRealTimeUpdates();
     stopClock();
+    
+    // Clean up periodic refresh
+    if (window.homePagePeriodicRefresh) {
+      clearInterval(window.homePagePeriodicRefresh);
+      window.homePagePeriodicRefresh = null;
+      console.log('🧹 Cleaned up periodic refresh');
+    }
     
     // Clean up alert service
     if (alertCallback) {
@@ -182,6 +293,7 @@ export function setupHomePageEvents(onLogout) {
     }
     alertService.cleanup();
     
+    console.log('🧹 All HomePage cleanup completed');
     onLogout();
   });
 
