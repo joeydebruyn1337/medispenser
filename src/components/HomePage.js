@@ -2,6 +2,7 @@ import medicineService from '../services/medicineService.js';
 import alertService from '../services/alertService.js';
 import { renderMedicineCards, initializeMedicineCardStyles, updateMedicineCards } from './MedicineCard.js';
 import { showMedicationAlert, initializeAlertModal } from './AlertModal.js';
+import { showLogsModal, initializeLogsModal } from './LogsModal.js';
 import { CONNECTION_STATUS, MESSAGES, CLOCK_UTILS } from '../utils/constants.js';
 
 let clockInterval = null;
@@ -74,6 +75,10 @@ export function renderHomePage() {
               <span class="btn-icon">🔍</span>
               Check IDs
             </button>
+            <button class="action-btn secondary" id="check-logs-btn">
+              <span class="btn-icon">📋</span>
+              Check Logs
+            </button>
           </section>
 
           ${!isConnected ? `
@@ -88,7 +93,16 @@ export function renderHomePage() {
 
   // Initialize all the alert-related components
   initializeAlertModal();
+  initializeLogsModal();
   initializeMedicineCardStyles();
+  
+  // Set up alert callback immediately after page render
+  if (!alertCallback) {
+    alertCallback = (alertData) => {
+      showMedicationAlert(alertData);
+    };
+    alertService.onAlert(alertCallback);
+  }
   
   // Start the clock
   startClock();
@@ -224,16 +238,7 @@ function updateConnectionStatus() {
 export function setupHomePageEvents(onLogout) {
   const logoutBtn = document.getElementById('logout-btn');
   const checkIdsBtn = document.getElementById('check-ids-btn');
-
-  // Initialize alert service
-  alertService.initialize();
-  
-  // Set up alert callback to show medication alerts
-  alertCallback = (alertData) => {
-    showMedicationAlert(alertData);
-  };
-  
-  alertService.onAlert(alertCallback);
+  const checkLogsBtn = document.getElementById('check-logs-btn');
 
   // Set up real-time updates for medicines
   console.log('Setting up real-time medicine updates...');
@@ -309,6 +314,23 @@ export function setupHomePageEvents(onLogout) {
         checkIdsBtn.innerHTML = originalText;
       }, 2000);
     }, 1500);
+  });
+
+  checkLogsBtn.addEventListener('click', async () => {
+    // Show medication logs modal
+    const originalText = checkLogsBtn.innerHTML;
+    checkLogsBtn.innerHTML = `<span class="btn-icon">⏳</span> Loading...`;
+    
+    try {
+      await showLogsModal();
+    } catch (error) {
+      console.error('Failed to show logs modal:', error);
+    } finally {
+      // Reset button text
+      setTimeout(() => {
+        checkLogsBtn.innerHTML = originalText;
+      }, 500);
+    }
   });
   
   // Return cleanup function for when page is destroyed

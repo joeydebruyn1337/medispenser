@@ -42,6 +42,8 @@ class AlertService {
 
     // Get current time and set up some test alerts for soon
     const now = new Date();
+    const testTime30sec = new Date(now.getTime() + 30000); // 30 seconds from now (for quick testing)
+    const testTime1min = new Date(now.getTime() + 60000); // 1 minute from now (for demo)
     const testTime1 = new Date(now.getTime() + 2 * 60000); // 2 minutes from now
     const testTime2 = new Date(now.getTime() + 5 * 60000); // 5 minutes from now
     const testTime3 = new Date(now.getTime() + 8 * 60000); // 8 minutes from now
@@ -54,13 +56,13 @@ class AlertService {
     const exampleSchedules = [
       {
         // Paracetamol - pain relief, every 6 hours + test alert + new reminder times + evening alerts
-        times: ['08:00', '14:00', '20:00', '09:10', '09:15', '09:20', '21:16', formatTime(testTime1)],
-        description: 'Pain relief medication - every 6 hours + morning/evening reminders'
+        times: ['08:00', '14:00', '20:00', '09:10', '09:15', '09:20', '21:16', formatTime(testTime30sec), formatTime(testTime1)],
+        description: 'Pain relief medication - every 6 hours + morning/evening reminders + 30sec test'
       },
       {
         // Aspirin - cardiovascular protection + new specific reminder times + test alert + evening alerts
-        times: ['21:06', '09:10', '09:15', '09:20', '21:17', formatTime(testTime2)],
-        description: 'Daily cardiovascular protection + morning/evening reminders'
+        times: ['21:06', '09:10', '09:15', '09:20', '21:17', formatTime(testTime1min), formatTime(testTime2)],
+        description: 'Daily cardiovascular protection + morning/evening reminders + 1min demo'
       },
       {
         // Ibuprofen - anti-inflammatory, three times daily + morning reminders + evening alerts
@@ -123,7 +125,7 @@ class AlertService {
     }
 
     console.log('Example schedules setup complete!');
-    console.log(`🕐 Test alerts scheduled for: ${formatTime(testTime1)}, ${formatTime(testTime2)}, ${formatTime(testTime3)}`);
+    console.log(`🕐 Test alerts scheduled for: ${formatTime(testTime30sec)} (30 sec), ${formatTime(testTime1min)} (1 min), ${formatTime(testTime1)}, ${formatTime(testTime2)}, ${formatTime(testTime3)}`);
   }
 
   // Save data to localStorage
@@ -204,6 +206,8 @@ class AlertService {
   checkForAlerts() {
     const currentTime = this.getCurrentTimeInMinutes();
     const currentDate = new Date().toDateString();
+    
+    console.log(`🕐 Checking for alerts at ${this.formatTime(currentTime)} (${currentTime} minutes)`);
 
     for (const [medicineId, schedule] of this.medicationSchedules) {
       if (!schedule.enabled) continue;
@@ -216,8 +220,13 @@ class AlertService {
           // Check if we already showed this alert today
           const alertKey = `${medicineId}-${scheduledTime}-${currentDate}`;
           
+          console.log(`⏰ Alert needed for ${schedule.medicineName} at ${this.formatTime(scheduledTime)}`);
+          
           if (!this.activeAlerts.has(alertKey)) {
+            console.log(`🔔 Showing new alert for ${schedule.medicineName}`);
             this.showMedicationAlert(schedule, scheduledTime, alertKey);
+          } else {
+            console.log(`⏭️ Alert already shown for ${schedule.medicineName} today`);
           }
         }
       }
@@ -237,16 +246,19 @@ class AlertService {
 
     this.activeAlerts.set(alertKey, alertData);
 
+    console.log(`📋 Registered callbacks: ${this.alertCallbacks.length}`);
+    
     // Notify all callbacks
-    this.alertCallbacks.forEach(callback => {
+    this.alertCallbacks.forEach((callback, index) => {
       try {
+        console.log(`📞 Calling alert callback ${index + 1}/${this.alertCallbacks.length}`);
         callback(alertData);
       } catch (error) {
         console.warn('Error in alert callback:', error);
       }
     });
 
-    console.log('Medication alert triggered:', alertData);
+    console.log('✅ Medication alert triggered:', alertData);
   }
 
   // Log medication taken

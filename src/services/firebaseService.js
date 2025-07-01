@@ -207,6 +207,137 @@ class FirebaseService {
     return dosages[medicineName] || 'N/A';
   }
 
+  // Fetch medicine intake logs from Firebase
+  async getMedicineIntakeLogs() {
+    // If database is null (demo mode), return demo logs
+    if (!database) {
+      console.log('Demo mode: Using demo intake logs');
+      return this.getDemoIntakeLogs();
+    }
+
+    try {
+      const { ref, get } = await import('firebase/database');
+      const logsRef = ref(database, 'medicine_intake_log');
+      const snapshot = await get(logsRef);
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        console.log('Fetched medicine intake logs from Firebase:', Object.keys(data).length, 'entries');
+        return data;
+      } else {
+        console.log('No intake logs found in Firebase, using demo data');
+        return this.getDemoIntakeLogs();
+      }
+    } catch (error) {
+      console.warn('Failed to fetch intake logs from Firebase, using demo data:', error);
+      return this.getDemoIntakeLogs();
+    }
+  }
+
+  // Fetch medicine statistics from Firebase
+  async getMedicineStats() {
+    // If database is null (demo mode), return demo stats
+    if (!database) {
+      console.log('Demo mode: Using demo medicine stats');
+      return this.getDemoMedicineStats();
+    }
+
+    try {
+      const { ref, get } = await import('firebase/database');
+      const statsRef = ref(database, 'medicine_stats');
+      const snapshot = await get(statsRef);
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        console.log('Fetched medicine stats from Firebase:', Object.keys(data).length, 'medicines');
+        return data;
+      } else {
+        console.log('No medicine stats found in Firebase, using demo data');
+        return this.getDemoMedicineStats();
+      }
+    } catch (error) {
+      console.warn('Failed to fetch medicine stats from Firebase, using demo data:', error);
+      return this.getDemoMedicineStats();
+    }
+  }
+
+  // Demo data for intake logs (when Firebase is not available)
+  getDemoIntakeLogs() {
+    const now = Date.now();
+    const yesterday = now - (24 * 60 * 60 * 1000);
+    const twoDaysAgo = now - (2 * 24 * 60 * 60 * 1000);
+
+    return {
+      "demo_001": {
+        "case_code": "21",
+        "date": "2024-01-01",
+        "datetime_readable": "2024-01-01 08:00:00",
+        "medicine": "Paracetamol",
+        "status": "SUCCESS",
+        "time": "08:00:00",
+        "timestamp": now - 3600000 // 1 hour ago
+      },
+      "demo_002": {
+        "case_code": "11",
+        "date": "2024-01-01",
+        "datetime_readable": "2024-01-01 14:00:00",
+        "medicine": "Aspirin",
+        "status": "DISPENSING",
+        "time": "14:00:00",
+        "timestamp": now - 1800000 // 30 minutes ago
+      },
+      "demo_003": {
+        "case_code": "12",
+        "date": "2023-12-31",
+        "datetime_readable": "2023-12-31 20:00:00",
+        "medicine": "Ibuprofen",
+        "status": "SUCCESS",
+        "time": "20:00:00",
+        "timestamp": yesterday
+      },
+      "demo_004": {
+        "case_code": "22",
+        "date": "2023-12-30",
+        "datetime_readable": "2023-12-30 12:00:00",
+        "medicine": "Amoxicillin",
+        "status": "SUCCESS",
+        "time": "12:00:00",
+        "timestamp": twoDaysAgo
+      }
+    };
+  }
+
+  // Demo data for medicine stats (when Firebase is not available)
+  getDemoMedicineStats() {
+    const now = Date.now();
+    return {
+      "Paracetamol": {
+        "last_taken": now - 3600000,
+        "last_taken_readable": "2024-01-01 08:00",
+        "medicine_name": "Paracetamol",
+        "total_taken": 5
+      },
+      "Aspirin": {
+        "last_taken": now - 1800000,
+        "last_taken_readable": "2024-01-01 14:00",
+        "medicine_name": "Aspirin",
+        "total_taken": 8
+      },
+      "Ibuprofen": {
+        "last_taken": now - 86400000,
+        "last_taken_readable": "2023-12-31 20:00",
+        "medicine_name": "Ibuprofen",
+        "total_taken": 3
+      },
+      "Amoxicillin": {
+        "last_taken": now - 172800000,
+        "last_taken_readable": "2023-12-30 12:00",
+        "medicine_name": "Amoxicillin",
+        "total_taken": 2
+      }
+    };
+  }
+
   getConnectionStatus() {
     return this.isConnected;
   }
